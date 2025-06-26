@@ -12,10 +12,8 @@ bl_info = {
 
 import os
 import random
-
 import bpy
 
-# TODO 3. Camera randomisen
 # TODO 4. Canvas integreren
 # TODO 5. Canvas randomisen
 
@@ -26,12 +24,6 @@ class LitterGeneratorProperties(bpy.types.PropertyGroup):
         soft_min=1, soft_max=100,
         update=lambda self, context: None
     )
-
-# def direction_to_euler(direction):
-#     dx, dy, dz = direction
-#     rot_y = math.atan2(dx, dz)
-#     rot_x = math.atan2(dy, math.sqrt(dx**2 + dz**2))
-#     return (rot_x, 0.0, -rot_y)
 
 class EnvironmentResetter(bpy.types.Operator):
     bl_idname = "littergen.reset_environment"
@@ -107,6 +99,26 @@ class SyntheticLitterPanel(bpy.types.Panel):
         layout.separator()
         layout.operator("littergen.capture_image", text="Create Images")
 
+def randomize_camera():
+    camera = bpy.context.scene.camera
+    target = bpy.data.objects.get("litter-object")
+
+    if not camera or not target:
+        return
+
+    radius = random.uniform(5, 30)
+    azimuth = random.uniform(0, 2 * math.pi)
+    elevation = random.uniform(math.radians(15), math.radians(45))
+
+    x = radius * math.cos(azimuth) * math.cos(elevation)
+    y = radius * math.sin(azimuth) * math.cos(elevation)
+    z = radius * math.sin(elevation)
+
+    camera.location = (x, y, z)
+
+    direction = target.location - camera.location
+    rot_quat = direction.to_track_quat('-Z', 'Y')
+    camera.rotation_euler = rot_quat.to_euler()
 
 def randomize_litter_position():
     bpy.data.objects["litter-object"].location = (
@@ -142,6 +154,10 @@ def reset_light():
     sun.data.energy = 5.0
     sun.data.angle = math.radians(15)
 
+def reset_camera(camera):
+    camera.location = (7, -7, 5)
+    camera.rotation_euler = (math.radians(60), 0, 0)
+
 class SyntheticLitterDataGenerator(bpy.types.Operator):
     bl_idname = "littergen.capture_image"
     bl_label = "Capture Image"
@@ -160,12 +176,14 @@ class SyntheticLitterDataGenerator(bpy.types.Operator):
 
         for i in range(image_count):
             randomize_litter_position()
+            randomize_camera()
             randomize_light()
 
             self.render_file(i, scene)
 
             reset_light()
             reset_litter_position()
+            reset_camera(camera)
 
         return {'FINISHED'}
 
