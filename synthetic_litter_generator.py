@@ -17,7 +17,6 @@ import bpy
 # CAMERA_RADIUS = 5.0
 # LIGHT_RADIUS = 5.0
 
-# TODO 1. Git toevoegen
 # TODO 2. Licht randomisen
 # TODO 3. Camera randomisen
 # TODO 4. Canvas integreren
@@ -98,6 +97,26 @@ class LitterGeneratorProperties(bpy.types.PropertyGroup):
 #     rot_x = math.atan2(dy, math.sqrt(dx**2 + dz**2))
 #     return (rot_x, 0.0, -rot_y)
 
+class EnvironmentResetter(bpy.types.Operator):
+    bl_idname = "littergen.reset_environment"
+    bl_label = "Reset the environment"
+    bl_description = "Resets the environment to camera and light elements"
+
+    def execute(self, context):
+        camera = context.scene.camera
+        for obj in list(bpy.data.objects):
+            if obj == camera:
+                continue
+            bpy.data.objects.remove(obj, do_unlink=True)
+
+        light_data = bpy.data.lights.new(name="Sun", type='SUN')
+        light_obj = bpy.data.objects.new(name="Sun", object_data=light_data)
+        context.collection.objects.link(light_obj)
+        light_obj.location = (5, -5, 5)
+
+        self.report({'INFO'}, "Environment reset: all objects except camera removed, and sun light added")
+        return {'FINISHED'}
+
 class LitterObjectImporter(bpy.types.Operator):
     bl_idname = "littergen.import_object"
     bl_label = "Import GLB Object"
@@ -141,6 +160,8 @@ class SyntheticLitterPanel(bpy.types.Panel):
         layout = self.layout
         props = context.scene.litter_generator_props
 
+        layout.operator("littergen.reset_environment", text="Reset environment")
+        layout.separator()
         layout.operator("littergen.import_object", text="Import Litter Object File")
         layout.separator()
         layout.label(text="Amount of images")
@@ -156,7 +177,6 @@ def randomize_litter_position():
         0
     )
     bpy.data.objects["litter-object"].rotation_quaternion[3] = random.randint(0, 3)
-
 
 def reset_litter_position():
     bpy.data.objects["litter-object"].location = (0, 0, 0)
@@ -200,6 +220,7 @@ class SyntheticLitterDataGenerator(bpy.types.Operator):
 
 classes = (
     LitterGeneratorProperties,
+    EnvironmentResetter,
     LitterObjectImporter,
     SyntheticLitterPanel,
     SyntheticLitterDataGenerator,
