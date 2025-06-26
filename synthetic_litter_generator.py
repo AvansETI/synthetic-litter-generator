@@ -14,9 +14,6 @@ import os
 import random
 import bpy
 
-# TODO 4. Canvas integreren
-# TODO 5. Canvas randomisen
-
 class LitterGeneratorProperties(bpy.types.PropertyGroup):
     image_count: bpy.props.IntProperty(
         name="Amount of Images",
@@ -70,9 +67,45 @@ class LitterObjectImporter(bpy.types.Operator):
         if imported_obj:
             imported_obj.name = "litter-object"
             self.report({'INFO'}, "GLB file imported and renamed to 'litter-object'")
+
+            litter_obj = bpy.data.objects.get("litter-object")
+            litter_obj.location = (0, 0, 0.250)
+
             return {'FINISHED'}
         else:
             self.report({'WARNING'}, "GLB imported but no object was selected")
+            return {'CANCELLED'}
+
+    def invoke(self, context, event):
+        context.window_manager.fileselect_add(self)
+        return {'RUNNING_MODAL'}
+
+class LitterCanvastImporter(bpy.types.Operator):
+    bl_idname = "littergen.import_canvas_object"
+    bl_label = "Import GLB Object"
+    bl_description = "Import a 3D canvas in GLB format (with textures)"
+
+    filepath: bpy.props.StringProperty(subtype='FILE_PATH')
+
+    def execute(self, context):
+        if not self.filepath.lower().endswith('.glb'):
+            self.report({'ERROR'}, "Only .glb files are supported")
+            return {'CANCELLED'}
+
+        bpy.ops.import_scene.gltf(
+            filepath=self.filepath,
+            filter_glob="*.glb;*.gltf",
+            import_pack_images=True
+        )
+
+        imported_obj = bpy.context.selected_objects[0] if bpy.context.selected_objects else None
+
+        if imported_obj:
+            imported_obj.name = "canvas-object"
+            self.report({'INFO'}, "GLB file imported and renamed to 'canvas-object'")
+            return {'FINISHED'}
+        else:
+            self.report({'WARNING'}, "GLB imported but no canvas object was selected")
             return {'CANCELLED'}
 
     def invoke(self, context, event):
@@ -91,6 +124,8 @@ class SyntheticLitterPanel(bpy.types.Panel):
         props = context.scene.litter_generator_props
 
         layout.operator("littergen.reset_environment", text="Reset environment")
+        layout.separator()
+        layout.operator("littergen.import_canvas_object", text="Import Canvas Object File")
         layout.separator()
         layout.operator("littergen.import_object", text="Import Litter Object File")
         layout.separator()
@@ -124,7 +159,7 @@ def randomize_litter_position():
     bpy.data.objects["litter-object"].location = (
         random.randint(0, 3),  # X
         random.randint(0, 3),  # Y
-        0
+        0.250
     )
     bpy.data.objects["litter-object"].rotation_quaternion[3] = random.randint(0, 3)
 
@@ -142,7 +177,7 @@ def randomize_light():
     )
 
 def reset_litter_position():
-    bpy.data.objects["litter-object"].location = (0, 0, 0)
+    bpy.data.objects["litter-object"].location = (0, 0, 0.250)
     bpy.data.objects["litter-object"].rotation_quaternion[3] = 0
 
 def reset_light():
@@ -200,6 +235,7 @@ class SyntheticLitterDataGenerator(bpy.types.Operator):
 classes = (
     LitterGeneratorProperties,
     EnvironmentResetter,
+    LitterCanvastImporter,
     LitterObjectImporter,
     SyntheticLitterPanel,
     SyntheticLitterDataGenerator,
