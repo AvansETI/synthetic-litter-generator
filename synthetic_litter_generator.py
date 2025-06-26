@@ -15,82 +15,17 @@ import random
 
 import bpy
 
-# --- Settings ---
-# CAMERA_RADIUS = 5.0
-# LIGHT_RADIUS = 5.0
-
 # TODO 3. Camera randomisen
 # TODO 4. Canvas integreren
 # TODO 5. Canvas randomisen
 
 class LitterGeneratorProperties(bpy.types.PropertyGroup):
-    # camera_azimuth: bpy.props.FloatProperty(
-    #     name="Camera Azimuth",
-    #     default=0.0, min=0.0, max=360.0,
-    #     update=lambda self, context: update_camera(context)
-    # )
-    # camera_elevation: bpy.props.FloatProperty(
-    #     name="Camera Elevation",
-    #     default=45.0, min=0.0, max=90.0,
-    #     update=lambda self, context: update_camera(context)
-    # )
-    # light_azimuth: bpy.props.FloatProperty(
-    #     name="Light Azimuth",
-    #     default=0.0, min=0.0, max=360.0,
-    #     update=lambda self, context: update_light(context)
-    # )
-    # light_elevation: bpy.props.FloatProperty(
-    #     name="Light Elevation",
-    #     default=45.0, min=0.0, max=90.0,
-    #     update=lambda self, context: update_light(context)
-    # )
     image_count: bpy.props.IntProperty(
         name="Amount of Images",
         default=1, min=1, max=100,
         soft_min=1, soft_max=100,
         update=lambda self, context: None
     )
-
-# def update_camera(context):
-#     props = context.scene.litter_generator_props
-#     az = math.radians(props.camera_azimuth)
-#     el = math.radians(props.camera_elevation)
-#     x = CAMERA_RADIUS * math.cos(el) * math.cos(az)
-#     y = CAMERA_RADIUS * math.cos(el) * math.sin(az)
-#     z = CAMERA_RADIUS * math.sin(el)
-#     cam = get_or_create_camera()
-#     cam.location = (x, y, z)
-#     direction = (-x, -y, -z)
-#     cam.rotation_euler = direction_to_euler(direction)
-#
-# def update_light(context):
-#     props = context.scene.litter_generator_props
-#     az = math.radians(props.light_azimuth)
-#     el = math.radians(props.light_elevation)
-#     x = LIGHT_RADIUS * math.cos(el) * math.cos(az)
-#     y = LIGHT_RADIUS * math.cos(el) * math.sin(az)
-#     z = LIGHT_RADIUS * math.sin(el)
-#     light = get_or_create_light()
-#     light.location = (x, y, z)
-#     direction = (-x, -y, -z)
-#     light.rotation_euler = direction_to_euler(direction)
-#
-# def get_or_create_camera():
-#     cam = bpy.context.scene.camera
-#     if cam is None or cam.type != 'CAMERA':
-#         cam_data = bpy.data.cameras.new(name="LitterGenCamera")
-#         cam = bpy.data.objects.new("LitterGenCamera", cam_data)
-#         bpy.context.collection.objects.link(cam)
-#         bpy.context.scene.camera = cam
-#     return cam
-#
-# def get_or_create_light():
-#     light_obj = bpy.data.objects.get("LitterGenLight")
-#     if light_obj is None or light_obj.type != 'LIGHT':
-#         light_data = bpy.data.lights.new(name="LitterGenLight", type='SUN')
-#         light_obj = bpy.data.objects.new("LitterGenLight", light_data)
-#         bpy.context.collection.objects.link(light_obj)
-#     return light_obj
 
 # def direction_to_euler(direction):
 #     dx, dy, dz = direction
@@ -113,7 +48,9 @@ class EnvironmentResetter(bpy.types.Operator):
         light_data = bpy.data.lights.new(name="Sun", type='SUN')
         light_obj = bpy.data.objects.new(name="Sun", object_data=light_data)
         context.collection.objects.link(light_obj)
+
         light_obj.location = (0, 3, 10)
+        camera.location = (7, -7, 5)
 
         self.report({'INFO'}, "Environment reset: all objects except camera removed, and sun light added")
         return {'FINISHED'}
