@@ -1,3 +1,5 @@
+import math
+
 bl_info = {
     "name": "Synthetic Litter Data Generator",
     "author": "Bjorn Jaeken",
@@ -17,7 +19,6 @@ import bpy
 # CAMERA_RADIUS = 5.0
 # LIGHT_RADIUS = 5.0
 
-# TODO 2. Licht randomisen
 # TODO 3. Camera randomisen
 # TODO 4. Canvas integreren
 # TODO 5. Canvas randomisen
@@ -112,7 +113,7 @@ class EnvironmentResetter(bpy.types.Operator):
         light_data = bpy.data.lights.new(name="Sun", type='SUN')
         light_obj = bpy.data.objects.new(name="Sun", object_data=light_data)
         context.collection.objects.link(light_obj)
-        light_obj.location = (5, -5, 5)
+        light_obj.location = (0, 3, 10)
 
         self.report({'INFO'}, "Environment reset: all objects except camera removed, and sun light added")
         return {'FINISHED'}
@@ -178,10 +179,31 @@ def randomize_litter_position():
     )
     bpy.data.objects["litter-object"].rotation_quaternion[3] = random.randint(0, 3)
 
+def randomize_light():
+    sun = bpy.data.objects.get("Sun")
+    if not sun or sun.type != 'LIGHT' or sun.data.type != 'SUN':
+        return
+
+    sun.data.energy = random.uniform(1.0, 10.0)
+    sun.data.angle = random.uniform(0.1, math.radians(45))
+    sun.location = (
+        random.uniform(-10, 10),
+        random.uniform(-10, 10),
+        random.uniform(10, 50)
+    )
+
 def reset_litter_position():
     bpy.data.objects["litter-object"].location = (0, 0, 0)
     bpy.data.objects["litter-object"].rotation_quaternion[3] = 0
 
+def reset_light():
+    sun = bpy.data.objects.get("Sun")
+    if not sun or sun.type != 'LIGHT' or sun.data.type != 'SUN':
+        return
+
+    sun.location = (0, 3, 10)
+    sun.data.energy = 5.0
+    sun.data.angle = math.radians(15)
 
 class SyntheticLitterDataGenerator(bpy.types.Operator):
     bl_idname = "littergen.capture_image"
@@ -201,9 +223,11 @@ class SyntheticLitterDataGenerator(bpy.types.Operator):
 
         for i in range(image_count):
             randomize_litter_position()
+            randomize_light()
 
             self.render_file(i, scene)
 
+            reset_light()
             reset_litter_position()
 
         return {'FINISHED'}
