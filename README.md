@@ -31,8 +31,8 @@ It is optional to integrate a virtual environment or conda environment.
 6. Render of synthetic litter images
 
 ![4_littergen_render](https://github.com/user-attachments/assets/4c5ecbb9-a94b-41c6-b144-8acb2bd6f77a)
-![10_littergen_render](https://github.com/user-attachments/assets/97a95888-f75f-4b91-ad26-2c622e6c7fe1)
-![33_littergen_render](https://github.com/user-attachments/assets/427223b5-0e98-48d5-8d37-5d8b5bf76a6a)
+![2_littergen_render](https://github.com/user-attachments/assets/01054cb8-90e4-4b30-82f2-940446bd1cc0)
+![141_littergen_render](https://github.com/user-attachments/assets/aa02e028-a903-4861-8733-a4ca828a3f76)
 ![45_littergen_render](https://github.com/user-attachments/assets/f0cacb96-0dea-4e35-bfc5-acdd46807133)
 
 ## Missing functionalities
