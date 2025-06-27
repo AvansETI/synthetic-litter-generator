@@ -38,9 +38,9 @@ It is optional to integrate a virtual environment or conda environment.
 ## Missing functionalities
 
 1. Integration with [Tencent/Hunyuan3D-2.1](https://huggingface.co/spaces/tencent/Hunyuan3D-2.1):
-This integration could have led to more 3D models through an integration of Blender, and a bigger variation of results. Unfortunatly, Hunyuan required too much computing power and the installation process was difficult to follow.
+This integration could have led to more 3D models, and a bigger variation of results. Unfortunatly, Hunyuan required too much computing power and the installation process was difficult to follow. Adding a text or image field in the Blender panel could increase productivity and result in a more optimized workflow.
 2. Perfect layering:
-It sometimes happens that the litter object goes through the canvas or out of the 'bounds'. Due to time limitations this is not worked out.
+It sometimes happens that the litter object goes through the canvas or out of 'bounds'. Due to time limitations this is not worked out. In an ideal situation the litter object should 'fall' on the canvas resulting in non-random floating parts of the object.
 3. Litter object modifications:
 Adding damage, scratches, and bendings to the object probably increase the possible realness.
 
