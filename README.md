@@ -44,3 +44,14 @@ It sometimes happens that the litter object goes through the canvas or out of th
 3. Litter object modifications:
 Adding damage, scratches, and bendings to the object probably increase the possible realness.
 
+## Where to go from here?
+
+Implementing the missing functionalities can be already of great benefit. The following list gives a perspective to achieve a more production-ready result:
+
+- Invest in more quality models to simulate realism even more.
+- Invest in the camera quality, since Blender has a guaranteed way to take more quality pictures.
+- Track what categories are under represented and what the availabilities are with modelling.
+- Explore and integrate other image/text to 3D models.
+
+Putting a student group on this project can also achieve more results. Students can focus on Generative Articial Intelligence (GenAI), Blender, 3D-Modelling, Python, Software Development, and the integration between components.
+
